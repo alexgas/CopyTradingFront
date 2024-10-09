@@ -1,22 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { EnvelopeClosedIcon } from "@radix-ui/react-icons";
+
 import { MyBarChart } from "@/components/MyBarChart";
 import { MyRadarChart } from "@/components/MyRadarChart";
 import { MyPieChart } from "@/components/MyPieChart";
 import { GearIcon, Share2Icon, ShuffleIcon } from "@radix-ui/react-icons";
-import Image from 'next/image'
+import Image from "next/image";
 import LoginButton from "@/components/loginButton";
-
 
 const RadarFakeData = [
   {
@@ -73,7 +63,14 @@ const landing = () => {
         </div>
         <div className="grid grid-cols-7 md:hidden">
           <div className="bg-white rounded-2xl col-span-7">
-          <Image src={`/chart.jpg`} priority alt={"alt"} width="300" height="200" className="rounded-2xl" />
+            <Image
+              src={`/chart.jpg`}
+              priority
+              alt={"alt"}
+              width="300"
+              height="200"
+              className="rounded-2xl"
+            />
           </div>
         </div>
       </div>
@@ -88,25 +85,6 @@ const landing = () => {
           </h3>
         </div>
         <LoginButton />
-        <Dialog>
-          <DialogTrigger>
-            <div className="flex flex-col gap-2 items-center">
-              <Button className="bg-white text-black md:bg-black md:text-white text-lg">
-                <EnvelopeClosedIcon className="mr-2 h-4 w-4" />
-                Login
-              </Button>
-              <span className="md:text-black">With Google</span>
-            </div>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Yes do it </DialogTitle>
-              <DialogDescription>
-                <Link href="/">Click here to login</Link>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
         <span className="text-center">
           By login, you agree to our
           <Link href="/terms"> Terms of Service and Privacy Policy.</Link>
