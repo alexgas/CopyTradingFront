@@ -23,7 +23,7 @@ export default function LoginButton() {
     <div className="flex flex-col gap-2 items-center">
       <Button
         className="bg-white text-black md:bg-black md:text-white text-lg"
-        onClick={() => signIn()}
+        onClick={() => signIn('google')}
       >
         <EnvelopeClosedIcon className="mr-2 h-4 w-4" />
         Login
