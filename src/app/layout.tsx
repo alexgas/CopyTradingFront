@@ -1,7 +1,10 @@
-import type { Metadata } from "next";
+"use client";
+
+// import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/Header";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -16,9 +19,8 @@ const geistMono = localFont({
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
+
   return (
     <html lang="en" suppressHydrationWarning>
       <Header
@@ -29,7 +31,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased max-h-screen`}
       >
-        {children}
+        <SessionProvider>
+          {children}
+          </SessionProvider>
       </body>
     </html>
   );

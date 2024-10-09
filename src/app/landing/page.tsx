@@ -15,6 +15,7 @@ import { MyRadarChart } from "@/components/MyRadarChart";
 import { MyPieChart } from "@/components/MyPieChart";
 import { GearIcon, Share2Icon, ShuffleIcon } from "@radix-ui/react-icons";
 import Image from 'next/image'
+import LoginButton from "@/components/loginButton";
 
 
 const RadarFakeData = [
@@ -86,6 +87,7 @@ const landing = () => {
             <span className="underline">share what you really want</span>
           </h3>
         </div>
+        <LoginButton />
         <Dialog>
           <DialogTrigger>
             <div className="flex flex-col gap-2 items-center">

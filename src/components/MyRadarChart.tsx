@@ -21,7 +21,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function MyRadarChart({ data, hasRadiusAxis, hasGrid }: any) {
+export function MyRadarChart({ data, hasRadiusAxis, hasGrid }: {data?: any, hasRadiusAxis?: boolean, hasGrid?: boolean}) {
 
   if(!data)
     data = [
