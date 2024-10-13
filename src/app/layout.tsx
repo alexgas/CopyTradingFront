@@ -6,6 +6,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { SessionProvider } from "next-auth/react";
 import UserProvider from "./context/userContext";
+import ModalNickname from "@/components/modals/modalNickname";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,6 +34,7 @@ export default function RootLayout({
       >
         <UserProvider>
           <SessionProvider>
+            <ModalNickname />
             {children}</SessionProvider>
         </UserProvider>
       </body>
