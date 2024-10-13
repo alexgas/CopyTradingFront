@@ -1,55 +1,97 @@
-"use client";
-
-import { MyBarChart } from "@/components/MyBarChart";
-import { MyPieChart } from "@/components/MyPieChart";
-import { MyRadarChart } from "@/components/MyRadarChart";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import {
-  MagnifyingGlassIcon,
-  Share1Icon,
-  PlusIcon,
-} from "@radix-ui/react-icons";
-import { useSession } from "next-auth/react";
+import React from "react";
 import Link from "next/link";
 
-export default function Home() {
-  const { data: session, status } = useSession();
+import { MyBarChart } from "@/components/MyBarChart";
+import { MyRadarChart } from "@/components/MyRadarChart";
+import { MyPieChart } from "@/components/MyPieChart";
+import { GearIcon, Share2Icon, ShuffleIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
+import LoginButton from "@/components/loginButton";
 
+const RadarFakeData = [
+  {
+    subject: "Purchase",
+    A: 100,
+    fullMark: 100,
+  },
+  {
+    subject: "Sell",
+    A: 70,
+    fullMark: 100,
+  },
+  {
+    subject: "Swap",
+    A: 33,
+    fullMark: 100,
+  },
+];
+
+const landing = () => {
   return (
-    <div className="max-h-screen grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-8 font-[family-name:var(--font-geist-sans)]">
-      <main className="w-full h-full overflow-auto flex gap-8 row-start-2 justify-between">
-        <div className="flex flex-col gap-6 items-center">
-          <Avatar className="w-44 h-44">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@alexg" />
-            <AvatarFallback>user</AvatarFallback>
-          </Avatar>
-          <h1 className="text-4xl font-bold">/alex</h1>
-          <Button variant="default">
-            <Share1Icon className="mr-2 h-4 w-4" />
-            Share this profile
-          </Button>
-          <Button variant="outline">
-            <MagnifyingGlassIcon className="mr-2 h-4 w-4" />
-            <Link href="/landing"> Explore</Link>
-          </Button>
+    <main className="w-full h-screen flex flex-col gap-0 md:gap-8 md:flex-row md:justify-between columns-2 overflow-hidden text-white bg-gradient-to-b from-gradient-start  via-gradient-middle to-gradient-end">
+      <div className="flex flex-col w-full items-center gap-8 p-8 md:p-16 ">
+        <h1 className="text-4xl md:text-6xl font-bold">CryptoFolio.me</h1>
+        <h2 className="text-2xl md:text-4xl text-center">
+          A door to trusted data 🚪🔒📊
+        </h2>
+        <div className="grid-cols-6 mt-6 w-full hidden md:grid">
+          <ul className="text-2xl withespace-pre-wrap font-bold flex flex-col gap-6 col-span-4 ml-8">
+            <li className="flex items-center">
+              <ShuffleIcon className="mr-2 h-10 w-10 bg-white rounded-full text-black p-1 ml-2" />
+              Connect your exchange.
+            </li>
+            <li className="flex items-center">
+              <GearIcon className="mr-2 h-10 w-10 bg-white rounded-full text-black p-1 ml-2" />
+              Set up your portfolio.
+            </li>
+            <li className="flex items-center">
+              <Share2Icon className="mr-2 h-10 w-10 bg-white rounded-full text-black p-1 ml-2" />
+              Share what you want.
+            </li>
+          </ul>
         </div>
-        <div className="w-full flex flex-col gap-6 items-center">
-          <h2 className="text-3xl">My basic statistics</h2>
-          <MyBarChart />
-          <MyPieChart />
-          <MyRadarChart />
+        <div className="hidden md:grid grid-cols-7 gap-12">
+          <div className="bg-white rounded-2xl pt-2 col-span-3 ">
+            <MyPieChart />
+          </div>
+          <div className="bg-white rounded-2xl pt-2 col-span-3 col-end-8">
+            <MyRadarChart data={RadarFakeData} />
+          </div>
+          <div className="bg-white rounded-2xl col-span-7">
+            <MyBarChart />
+          </div>
         </div>
-      </main>
-      {status != "authenticated" && (
-        <footer className="w-full row-start-3 flex gap-6 flex-wrap items-center justify-start">
-          <Button variant="default">
-            <PlusIcon className="mr-2 h-4 w-4" />
-            Create your portfolio
-          </Button>
-          <Button variant="secondary">Login</Button>
-        </footer>
-      )}
-    </div>
+        <div className="grid grid-cols-7 md:hidden">
+          <div className="bg-white rounded-2xl col-span-7">
+            <Image
+              src={`/chart.jpg`}
+              priority
+              alt={"alt"}
+              width="300"
+              height="200"
+              className="rounded-2xl"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="w-full flex flex-col items-center gap-10 p-8 justify-center md:bg-white md:text-black">
+        <div>
+          <h2 className="text-2xl md:text-4xl font-bold text-justify md:text-center">
+            Get your unique link and show everyone your crypto portfolio
+          </h2>
+          <h3 className="text-xl md:text-2xl md:font-bold text-left md:text-center">
+            create your personalized page to{" "}
+            <span className="underline">share what you really want</span>
+          </h3>
+        </div>
+        <LoginButton />
+        <span className="text-center">
+          By login, you agree to our
+          <Link href="/terms"> Terms of Service and Privacy Policy.</Link>
+        </span>
+      </div>
+    </main>
   );
-}
+};
+
+export default landing;
