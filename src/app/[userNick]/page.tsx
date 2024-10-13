@@ -12,9 +12,68 @@ import {
 } from "@radix-ui/react-icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useUserContext } from "../hooks/useUser";
+import { useEffect, useState } from "react";
+
 
 export default function Home({ params }: { params: { userNick: string } }) {
   const { data: session, status } = useSession();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const { setActualUser, actualUser } =
+    useUserContext();
+
+    // Initialize user info 
+    useEffect(() => {
+      const fetchUserInfo = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/v1/user/${params.userNick}`
+          );
+          if (!response.ok) {
+            throw new Error("Failed to fetch user Info");
+          }
+          const data = await response.json();
+          setActualUser(data.data);
+  
+        } catch (error) {
+          // Faking user 
+          setActualUser({
+            id: "123456",
+            nickName: "User",
+            email: "nXKwv@example.com",
+            timestampable: {
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            }
+          })
+          //setError("" + error);
+          console.error(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      if (!actualUser && params.userNick) {
+        fetchUserInfo();
+      }
+    }, []);
+  
+    if (loading) {
+      return (
+        <div className="h-full w-full flex justify-center content-center">
+          {"cargando"}
+        </div>
+      );
+    }
+    
+    if (error) {
+      return (
+        <div className="h-full w-full flex justify-center content-center">
+          {"Error loading profile"}
+        </div>
+      );
+    }
 
   return (
     <div className="max-h-screen grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-8 font-[family-name:var(--font-geist-sans)]">
