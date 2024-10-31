@@ -1,12 +1,10 @@
-"use client";
-
-// import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
 import Header from "@/components/Header";
-import { SessionProvider } from "next-auth/react";
-import UserProvider from "./context/userContext";
 import ModalNickname from "@/components/modals/modalNickname";
+import localFont from "next/font/local";
+//import { useEffect } from "react";
+import UserProvider from "./context/userContext";
+import "./globals.css";
+import { Providers } from "./providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,6 +16,7 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+
 
 export default function RootLayout({
   children,
@@ -32,11 +31,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased max-h-screen`}
       >
-        <UserProvider>
-          <SessionProvider>
+        <Providers>
+          <UserProvider>
             <ModalNickname />
-            {children}</SessionProvider>
-        </UserProvider>
+            {children}
+          </UserProvider>
+        </Providers>
       </body>
     </html>
   );

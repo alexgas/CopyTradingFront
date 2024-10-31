@@ -1,5 +1,7 @@
 "use client";
 
+import { useUserContext } from "@/app/hooks/useUser";
+import LoginButton from "@/components/loginButton";
 import { MyBarChart } from "@/components/MyBarChart";
 import { MyPieChart } from "@/components/MyPieChart";
 import { MyRadarChart } from "@/components/MyRadarChart";
@@ -7,78 +9,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   MagnifyingGlassIcon,
-  Share1Icon,
   PlusIcon,
+  Share1Icon,
 } from "@radix-ui/react-icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useUserContext } from "../hooks/useUser";
-import { useEffect, useState } from "react";
-import LoginButton from "@/components/loginButton";
+import { useState } from "react";
 
-export default function Home({ params }: { params: { userNick: string } }) {
+export default function Home({ params }: { params: { userNickame: string } }) {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const { setActualUser, actualUser } = useUserContext();
-  const [profileEditable, setProfileEditable] = useState<boolean>(false);
-  console.log("render home page");
-
-  //TODO infinite loop
-
-  // Initialize user info
-  useEffect(() => {
-    // const checkProfileEditable = () => {
-    //   if (session && actualUser) {
-    //     const isEditable = actualUser?.email === session?.user?.email;
-
-    //     // Solo actualizamos si es necesario
-    //     if (profileEditable !== isEditable) {
-    //       console.log("cambiamos el estado a " + isEditable);
-    //       setProfileEditable(isEditable);
-    //     }
-    //   }
-    // };
-
-    // const fetchUserInfo = async () => {
-    //   try {
-    //     const response = await fetch(
-    //       `${process.env.NEXT_PUBLIC_BASE_URL}/v1/user/${params.userNick}`
-    //     );
-    //     if (!response.ok) {
-    //       throw new Error("Failed to fetch user Info");
-    //     }
-    //     const data = await response.json();
-    //     setActualUser(data.data);
-    //   } catch (error) {
-    //     // Faking user
-    //     setActualUser({
-    //       id: "123456",
-    //       nickName: "User",
-    //       email: "nXKwv@example.com",
-    //       timestampable: {
-    //         createdAt: new Date(),
-    //         updatedAt: new Date(),
-    //       },
-    //     });
-    //     //setError("" + error);
-    //     console.error(error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-
-    // if (!actualUser && params.userNick) {
-    //   fetchUserInfo().then(() => {
-    //     checkProfileEditable();
-    //   });
-    // }
-  }, []);
+  console.log("render edit page");
 
   if (loading) {
     return (
       <div className="h-full w-full flex justify-center content-center">
-        {"cargando"}
+        {"Loading your page"}
       </div>
     );
   }
@@ -98,11 +46,11 @@ export default function Home({ params }: { params: { userNick: string } }) {
           <Avatar className="w-44 h-44">
             <AvatarImage
               src="https://github.com/shadcn.png"
-              alt={params.userNick}
+              alt={params.userNickame}
             />
             <AvatarFallback>user</AvatarFallback>
           </Avatar>
-          <h1 className="text-4xl font-bold">{params.userNick}</h1>
+          <h1 className="text-4xl font-bold">{params.userNickame}</h1>
           <Button variant="default">
             <Share1Icon className="mr-2 h-4 w-4" />
             Share this profile
@@ -117,12 +65,10 @@ export default function Home({ params }: { params: { userNick: string } }) {
           <MyBarChart />
           <MyPieChart />
           <MyRadarChart />
-          {profileEditable && (
-            <Button variant="default">
-              <PlusIcon className="mr-2 h-4 w-4" />
-              Add charts
-            </Button>
-          )}
+          <Button variant="default">
+            <PlusIcon className="mr-2 h-4 w-4" />
+            Add charts
+          </Button>
         </div>
       </main>
       {status != "authenticated" && (
