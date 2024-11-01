@@ -1,7 +1,29 @@
-import { User } from "@/interfaces/user.interface";
-import NextAuth, { Session } from "next-auth";
+import NextAuth, { Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
+import { User as MyUser } from "@/interfaces/user.interface";
+
+async function sendGoogleAuthRequest(data: { email: string; idToken: string }) {
+  return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/google`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+}
+
+async function createUser(email: string, accessToken: string) {
+  return await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/user`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ email }),
+  });
+}
+
 export const authOptions = {
   // Configure one or more authentication providers
 
@@ -18,29 +40,50 @@ export const authOptions = {
     // ...add more providers here
   ],
   callbacks: {
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }: any) {
       // Añade nickname al objeto de session
-      session.user.nickName = token.nickName as string;
+      // console.log("SESSION METHOD");
+      // console.log("el token de session method: ", token);
+      session.user.nickName = token?.userData?.nickName as string;
+      session.user.apiExchangeToken = token?.userData?.apiExchangeToken as string;
+      // session.user.nickName = token.nickName as string;
       return session;
     },
-    async jwt({ token, user }: { token: JWT; user?: any }) {
-      // Solo se ejecuta en el primer login
+    async jwt({ token, user, trigger, session}: { token: JWT; user?: any; trigger?: string; session?: any }) {
+       console.log("JWT METHOD token", token);
+       console.log("JWT METHOD user", user);
+       console.log("JWT METHOD trigger", trigger);
+       console.log("JWT METHOD session", session);
+       if (trigger === "update") {
+         // Note, that `session` can be any arbitrary object, remember to validate it!
+         token.userData = {
+          nickName: session.nickName,
+          apiExchangeToken: session.apiExchangeToken
+          //... more properties 
+        };
+        }
+        
+        // Solo se ejecuta en el primer login
       if (user) {
         // Obtén el nickname del usuario desde la base de datos o el propio objeto `user`
         // const userFromDb = await getUserFromDatabase(user.id);
         // TODO get from DB
-        token.nickName = "alex";
+        console.log("JWT METHOD on the first login", user);
+
+        token.userData = {
+          nickName: user.nickName,
+          apiExchangeToken: user.apiExchangeToken
+          //... more properties 
+        };
       }
       return token;
     },
-    
-    
-    async signIn({ account, profile }: any) {
-      console.log("signim - account", account);
-      console.log("signim - profile", profile);
+
+    async signIn({ account, profile, user }: any) {
+      console.log("SIGNIN METHOD");
 
       if (account.provider === "google") {
-        let createdUserData: User = {
+        let createdUserData: MyUser = {
           id: "",
           nickName: null,
           email: "",
@@ -55,16 +98,7 @@ export const authOptions = {
             idToken: account.id_token,
           };
 
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/google`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(data),
-            }
-          );
+          const response = await sendGoogleAuthRequest(data);
 
           if (!response.ok) {
             return false;
@@ -73,16 +107,9 @@ export const authOptions = {
           const responseData = await response.json();
           console.log(responseData);
           if (responseData.isVerified) {
-            const createdUser = await fetch(
-              `${process.env.NEXT_PUBLIC_BASE_URL}/v1/user`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${account.access_token}`,
-                },
-                body: JSON.stringify({ email: profile.email }),
-              }
+            const createdUser = await createUser(
+              profile.email,
+              account.access_token
             );
 
             if (!createdUser.ok) {
@@ -91,7 +118,13 @@ export const authOptions = {
             createdUserData = await createdUser.json();
             console.log("createdUserData", createdUserData);
 
-           return true;
+            user.nickName = createdUserData.nickName;
+            // Faking usernickname and apiExchangeToken
+            // user.nickName = createdUserData.nickName ? createdUserData.nickName : "elAlex";
+            user.apiExchangeToken = createdUserData.apiExchangeToken ? createdUserData.apiExchangeToken : "123123123";
+            console.log("user definid on signin", user);
+
+            return true;
           }
         } catch (error) {
           console.error(error);
@@ -101,9 +134,6 @@ export const authOptions = {
 
       return false;
     },
-
-
-
   },
 };
 

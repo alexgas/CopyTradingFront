@@ -5,9 +5,9 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      nickName: string | null;
+      nickName?: string | null;
       email: string;
-      apiExchangeToken?: string;
+      apiExchangeToken?: string | null;
       // Otros campos del usuario
     };
   }

@@ -1,7 +1,8 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,16 +10,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { useUserContext } from "@/app/hooks/useUser";
-import { useState } from "react";
 
 export default function ModalNickname() {
-  const { data: session } = useSession();
-  const { loggedUser } = useUserContext();
+  const { data: session, update } = useSession();
   const [nick, setNick] = useState<string | null>("");
 
+  async function handleEditSession() {
+    // TODO make a patch request to the endpint to update the user in database
+
+    // update the session
+    const updateSession = await update({ nickName: nick });
+  }
   return (
-    <Dialog open={(loggedUser && !loggedUser.nickName) ?? false}>
+    <Dialog open={(session && !session.user.nickName) ?? false}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Claim your unique page</DialogTitle>
@@ -35,6 +39,7 @@ export default function ModalNickname() {
             />
           </div>
           <Button
+            onClick={() => handleEditSession()}
             type="submit"
             size="sm"
             className="px-3 bg-white text-black md:bg-black md:text-white text-lg"
