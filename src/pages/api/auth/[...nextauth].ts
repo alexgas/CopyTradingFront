@@ -49,16 +49,14 @@ export const authOptions = {
       // session.user.nickName = token.nickName as string;
       return session;
     },
-    async jwt({ token, user, trigger, session}: { token: JWT; user?: any; trigger?: string; session?: any }) {
+    async jwt({ token, user, trigger, session}: { token: any; user?: any; trigger?: string; session?: any }) {
        console.log("JWT METHOD token", token);
-       console.log("JWT METHOD user", user);
-       console.log("JWT METHOD trigger", trigger);
        console.log("JWT METHOD session", session);
        if (trigger === "update") {
          // Note, that `session` can be any arbitrary object, remember to validate it!
          token.userData = {
-          nickName: session.nickName,
-          apiExchangeToken: session.apiExchangeToken
+          nickName: session.nickName ? session.nickName : token.userData?.nickName,
+          apiExchangeToken: session.apiExchangeToken ? session.apiExchangeToken : token.userData?.apiExchangeToken
           //... more properties 
         };
         }
@@ -119,9 +117,11 @@ export const authOptions = {
             console.log("createdUserData", createdUserData);
 
             user.nickName = createdUserData.nickName;
+            user.apiExchangeToken = createdUserData.apiExchangeToken;
+           
             // Faking usernickname and apiExchangeToken
             // user.nickName = createdUserData.nickName ? createdUserData.nickName : "elAlex";
-            user.apiExchangeToken = createdUserData.apiExchangeToken ? createdUserData.apiExchangeToken : "123123123";
+            // user.apiExchangeToken = createdUserData.apiExchangeToken ? createdUserData.apiExchangeToken : "123123123";
             console.log("user definid on signin", user);
 
             return true;

@@ -17,9 +17,9 @@ export default function ModalNickname() {
 
   async function handleEditSession() {
     // TODO make a patch request to the endpint to update the user in database
-
     // update the session
-    const updateSession = await update({ nickName: nick });
+    await update({ nickName: nick });
+
   }
   return (
     <Dialog open={(session && !session.user.nickName) ?? false}>
@@ -34,7 +34,7 @@ export default function ModalNickname() {
           <span>@</span>
           <div className="grid flex-1 gap-2">
             <input
-              defaultValue="alex"
+              placeholder="alex"
               onChange={(e) => setNick(e.target.value)}
             />
           </div>
